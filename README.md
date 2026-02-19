@@ -11,10 +11,13 @@ O chatbot recebe o nome da cidade no formato `Cidade,UF`, consulta a API públic
 - ✅ Recebe mensagens de texto no Telegram
 - ✅ Normaliza a entrada do usuário (espaços, acentuação, letras minúsculas/maiúsculas)
 - ✅ Consulta a API do OpenWeather via HTTP Request
-- ✅ Retorna a temperatura em graus Celsius
+- ✅ Retorna a temperatura em graus Celsius com **formatação Markdown**
+- ✅ Exibe dados extras: sensação térmica e umidade
 - ✅ Trata erros de forma amigável quando a cidade não é encontrada
 - ✅ Diferencia erros de API (404, 500, timeout)
 - ✅ Validação de input vazio
+- ✅ Suporte ao formato `Cidade,UF` e apenas `Cidade`
+- ✅ Mensagens formatadas com negrito, código e emojis
 
 ---
 
@@ -147,24 +150,55 @@ São Paulo,SP
 Belo Horizonte,MG
 Curitiba,PR
 Rio de Janeiro,RJ
+Curitiba (sem UF também funciona)
 ```
 
 ### Resposta Esperada (Sucesso)
 
 ```
 🌤️ A temperatura em São Paulo é de 25°C.
+
+Sensação térmica: 23°C
+Humidade: 65%
 ```
+
+> **Nota**: A mensagem usa **formatação Markdown** com o nome da cidade e temperatura em **negrito**.
 
 ### Resposta Esperada (Erro - Cidade não encontrada)
 
 ```
-❌ Cidade não encontrada. Use o formato Cidade,UF (ex.: São Paulo,SP).
+❌ Cidade Xpto não encontrada.
+
+Use o formato: Cidade,UF
+
+📍 Exemplos:
+• São Paulo,SP
+• Rio de Janeiro,RJ
+• Belo Horizonte,MG
+```
+
+### Resposta Esperada (Erro - Input Vazio)
+
+```
+⚠️ Por favor, envie o nome de uma cidade.
+
+📍 Formato: Cidade,UF
+
+✅ Exemplos válidos:
+• São Paulo,SP
+• Rio de Janeiro,RJ
+• Curitiba,PR
+• Porto Alegre,RS
 ```
 
 ### Resposta Esperada (Erro - Problema na API)
 
 ```
-⚠️ Erro ao consultar a previsão do tempo. Tente novamente mais tarde.
+⚠️ Erro ao consultar a previsão do tempo.
+
+Tente novamente em alguns instantes.
+
+Se o problema persistir, verifique se digitou corretamente.
 ```
 
 ---
@@ -172,11 +206,23 @@ Rio de Janeiro,RJ
 ## 🔍 Validações Implementadas
 
 - ✅ Normalização de acentos e espaços extras
-- ✅ Conversão para formato `cidade,UF`
-- ✅ Validação de resposta da API (código 200)
+- ✅ Conversão para formato `cidade,UF,BR` (compatível com API OpenWeather)
+- ✅ Validação de resposta da API (código **200 como NUMBER**, não STRING)
 - ✅ Tratamento de erros HTTP (timeout, 404, 500)
 - ✅ Mensagens diferenciadas por tipo de erro
 - ✅ Input vazio ou inválido
+- ✅ Formatação Markdown em todas as mensagens
+- ✅ Descrições (notes) em todos os nós do workflow
+
+### 🎯 Correções da Versão 3.0
+
+Esta versão corrige os problemas identificados no feedback de **35/50**:
+
+1. **Conflito de tipos resolvido**: O nó de validação agora compara `cod` como **NUMBER** (não mais STRING)
+2. **Formato Cidade,UF corrigido**: Agora adiciona `,BR` ao final para compatibilidade com a API
+3. **Formatação Markdown**: Todas as mensagens agora usam `parse_mode: Markdown` para melhor visualização
+4. **Dados extras**: Sensação térmica e umidade adicionadas à resposta
+5. **Notas nos nós**: Cada nó do workflow tem uma descrição clara do que faz
 
 ---
 
@@ -249,4 +295,6 @@ O plano gratuito do Ngrok expira após 2 horas. Para produção, considere:
 
 Este projeto é de código aberto para fins educacionais.
 
+---
 
+**Desenvolvido com ❤️ usando N8N**
